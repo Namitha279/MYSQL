@@ -1,0 +1,356 @@
+create database company_db;
+use company_db;
+
+create table Department(deptno int primary key, dname varchar(20) not null, loc varchar(20) not null);
+describe Department;
+insert into Department values(10,'ACCOUNTING','NEW YORK');
+insert into Department values(20,'RESEARCH','DALLAS');
+insert into Department values(30,'SALES','CHICAGO');
+insert into Department values(40,'OPERATIONS','BOSTON');
+select * from Department;
+drop table Department;
+
+create table empdetails(empno int primary key,ename varchar(30) not null,job varchar(30) not null, mgr int ,hiredate date not null, salary int not null, commision int, deptno int ,foreign key(deptno) references department(deptno));
+select * from empdetails;empdetails
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7369,'SMITH','CLERK',7902,'1980-12-17',800,20);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,commision,deptno) values(7499,'ALLEN','SALESMAN',7698,'1981-02-20',1600,300,30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,commision,deptno) values(7521,'WARD','SALESMAN',7698,'1981-02-22',1250,500,30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7566,'JONES','MANAGER',7839,'1981-04-02',2975,20);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,commision,deptno) values(7654,'MARTIN','SALESMAN',7698,'1981-09-28',1250,1400,30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7698, 'BLAKE', 'MANAGER', 7839, '1981-05-01', 2850, 30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7782, 'CLARK', 'MANAGER', 7839, '1981-06-09', 2450, 10);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7788, 'SCOTT', 'ANALYST', 7566, '1987-04-19', 3000, 20);
+insert into empdetails(empno,ename,job,hiredate,salary,deptno) values(7839, 'KING', 'PRESIDENT',  '1981-11-17', 5000, 10);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,commision,deptno) values(7844, 'TURNER', 'SALESMAN', 7698, '1981-09-08', 1500, 0, 30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7876, 'ADAMS', 'CLERK', 7788, '1987-05-23', 1100, 20);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7900, 'JAMES', 'CLERK', 7698, '1981-12-03', 950,  30);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7902, 'FORD', 'ANALYST', 7566, '1981-12-03', 3000,  20);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(7934, 'MILLER', 'CLERK', 7782, '1982-01-23', 1300,  10);
+insert into empdetails(empno,ename,job,mgr,hiredate,salary,deptno) values(1111, 'dolu', 'CLERK', 7782, '1982-01-23', 1300,  10);
+delete from empdetails where empno=1111;
+-- operators
+select ename,deptno
+from empdetails
+where deptno=10 and job='manager';
+
+select salary,deptno
+from empdetails
+where salary between 1250 and 4000 and deptno=10;
+
+select ename,job,deptno
+from empdetails
+where job in('salesman','clerk') and deptno in (10,30) and salary>1800;
+
+select ename,deptno
+from empdetails
+where deptno not in (10,40);
+
+select *,salary*12 as annual_salary
+from empdetails
+where deptno=30 and job='salesman' and salary*12>10000;
+
+select ename,salary,salary*12 as annual_salary,deptno
+from empdetails
+where deptno=20 and salary>1100 and salary*12>1200;
+
+select ename,hiredate
+from empdetails
+where hiredate between '1981-12-31' and '1987-01-01';
+
+select ename,salary,hiredate
+from empdetails
+where hiredate between '2017-01-01' and '2017-12-31' and deptno=20 and salary>2000;
+
+select ename,salary
+from empdetails
+where salary not between 1000 and 3000;
+
+
+-- like operator
+select ename
+from empdetails
+where ename like 'S%';
+
+select ename 
+from empdetails
+where ename like '%A';
+
+select ename 
+from empdetails
+where ename like '_m%';
+
+select ename,hiredate
+from empdetails
+where hiredate like '%-04-%';
+
+select ename 
+from empdetails
+where ename like '%a%a%';
+
+select count(ename )
+from empdetails
+where ename like '%e%';
+
+select avg(salary),max(salary),sum(salary),count(salary)
+from empdetails
+where job='president';
+
+select deptno,max(salary)
+from empdetails
+group by deptno;
+
+select job,deptno,max(salary)
+from empdetails
+group by deptno,job;
+
+select count(ename),job
+from empdetails
+where ename like '%a%'
+group by job;
+
+select count(ename),job,deptno
+from empdetails
+where ename like '%a%'
+group by job,deptno
+order by job asc;
+
+select count(ename),deptno
+from empdetails
+group by deptno 
+having count(deptno)>=3;
+
+-- subquery
+select ename 
+from empdetails
+where salary=(select salary 
+from empdetails
+where ename='MILLER');
+
+select ename,deptno
+from empdetails 
+where deptno=(select deptno 
+from empdetails
+where ename='SMITH');
+
+select ename,hiredate
+from empdetails
+where hiredate>
+(select hiredate 
+from empdetails 
+where ename='JONES');
+
+select ename, salary, deptno
+from empdetails
+where salary>2000 and deptno=(select deptno 
+from empdetails 
+where ename='james');
+
+select * 
+from empdetails
+where salary>(select salary from empdetails where ename ='smith') and salary<(select salary from empdetails where ename ='king');
+
+select ename
+from empdetails
+where deptno=(select deptno from empdetails where ename ='james') and
+salary> (select salary from empdetails where ename ='smith') and
+job= (select job from empdetails where ename ='miller') and
+hiredate >(select hiredate from empdetails where ename ='martin');
+
+select dname
+from department 
+where deptno=(select deptno from empdetails where ename='miller');
+
+select count(ename)
+from empdetails
+where deptno=(select deptno from department where dname= 'accounting');
+
+select *
+from empdetails
+where job=(select job from empdetails where ename='miller') and deptno=(select deptno from department where loc='new york');
+
+-- HW
+select ename
+from empdetails
+where  salary> all(select salary from empdetails where job='salesman');
+
+select * from empdetails where hiredate> all(select hiredate from empdetails where job='clerk');
+
+select ename, salary from empdetails where salary< any(select salary from empdetails where job='manager');
+
+select ename, hiredate from empdetails where hiredate< all(select hiredate from empdetails where job='manager');
+
+select ename from empdetails where hiredate> all(select hiredate from empdetails where job='manager') and 
+salary> all(select salary from empdetails where job='clerk');
+
+select * from empdetails where job='clerk' and hiredate< any(select hiredate from empdetails where job='salesman');
+
+select* from empdetails where deptno = any( select deptno from department where dname='accounting' or dname='sales');
+-- or select* from empdetails where deptno in( select deptno from department where dname='accounting' or dname='sales');
+
+select dname from department where deptno= any(select deptno from empdetails where ename='smith' or ename='miller' or ename ='king');
+
+select dname d ,ename e
+from department d, empdetails e 
+where d.deptno=e.deptno (ename='smith' or ename='miller' or ename ='king');
+
+select dname d, ename e
+from department, empdetails
+select ename
+from empdetails
+where  salary> all(select salary from empdetails where job='salesman');
+
+select * from empdetails where hiredate> all(select hiredate from empdetails where job='clerk');
+
+select ename, salary from empdetails where salary< any(select salary from empdetails where job='manager');
+
+select ename, hiredate from empdetails where hiredate< all(select hiredate from empdetails where job='manager');
+
+select ename from empdetails where hiredate> all(select hiredate from empdetails where job='manager') and 
+salary> all(select salary from empdetails where job='clerk');
+
+select * from empdetails where job='clerk' and hiredate< any(select hiredate from empdetails where job='salesman');
+
+select* from empdetails where deptno = any( select deptno from department where dname='accounting' or dname='sales');
+-- or select* from empdetails where deptno in( select deptno from department where dname='accounting' or dname='sales');
+
+select dname from department where deptno= any(select deptno from empdetails where ename='smith' or ename='miller' or ename ='king');
+
+select dname ,ename 
+from department d, empdetails e 
+where d.deptno=e.deptno and deptno IN (
+select ename
+from empdetails
+where  salary> all(select salary from empdetails where job='salesman');
+
+select * from empdetails where hiredate> all(select hiredate from empdetails where job='clerk');
+
+select ename, salary from empdetails where salary< any(select salary from empdetails where job='manager');
+
+select ename, hiredate from empdetails where hiredate< all(select hiredate from empdetails where job='manager');
+
+select ename from empdetails where hiredate> all(select hiredate from empdetails where job='manager') and 
+salary> all(select salary from empdetails where job='clerk');
+
+select * from empdetails where job='clerk' and hiredate< any(select hiredate from empdetails where job='salesman');
+
+select* from empdetails where deptno = any( select deptno from department where dname='accounting' or dname='sales');
+-- or select* from empdetails where deptno in( select deptno from department where dname='accounting' or dname='sales');
+
+select dname, ename from department,empdetails where deptno = any(select deptno from empdetails where ename='smith' or ename='miller' or ename ='king');
+ 
+
+ select dname d ,ename e
+ from department d, empdetails e 
+ where d.deptno=e.deptno and ename in ('smith','king','miller');
+
+select * from empdetails where deptno =any(select deptno from department where loc='new york' or loc='chicago');
+
+select ename from empdetails where hiredate>all(select hiredate from empdetails where deptno=10);
+
+-- interview 
+select max(salary) 
+from empdetails 
+where salary<(select max(salary) from empdetails);
+
+-- JOINS
+select e.ename ,d.dname
+from empdetails e cross join department d;
+
+select ename, dname
+from empdetails e inner join department d
+on  e.deptno=e.deptno;
+
+select d.loc, e.ename
+from empdetails e inner join department d 
+ on job='manager' and e.deptno=d.deptno;
+
+select e.ename, d.dname, e.salary 
+from empdetails e inner join department d
+on d.deptno=e.deptno;
+
+select e.salary ,d.dname 
+from empdetails e INNER JOIN department d
+on dname='accounting' and e.deptno=d.deptno;
+
+select e.job, d.dname 
+from empdetails e inner join department d
+on d.deptno=e.deptno and job like 's%' and dname like 's%';
+
+select * from empdetails e right join department d on e.deptno=d.deptno;
+
+select * from empdetails e left join department d on e.deptno=d.deptno;
+
+select * from empdetails e right join department d on e.deptno=d.deptno
+union all
+select * from empdetails e left join department d on e.deptno=d.deptno;
+
+select e.ename
+from empdetails e join empdetails e1
+on e.empno=e1.mgr ;
+
+select e1.ename,e1.salary,e2.ename,e2.salary
+from empdetails e1 join empdetails e2
+on e1.mgr = e2.empno;
+
+select e1.ename,e1.deptno,e2.ename,e2.deptno
+from empdetails e1 join empdetails e2
+on e1.mgr = e2.empno 
+where e1.job='clerk';
+
+select e1.ename,e2.job
+from empdetails e1 join empdetails e2
+on e1.mgr = e2.empno 
+where e2.job='analyst';
+
+select e1.ename,e1.job,e2.ename,e2.job
+from empdetails e1 join empdetails e2
+on  e1.mgr = e2.empno
+where e1.job=e2.job;
+
+
+select e1.ename,e1.salary,e2.ename,e2.salary
+from empdetails e1 join empdetails e2
+on  e1.mgr = e2.empno
+where e1.salary<e2.salary;
+
+select * from empdetails e join department d
+on e.deptno=d.deptno;
+
+select e.ename,e.salary,d.dname
+from empdetails e natural join department d
+where e.deptno=(select deptno from empdetails where job='president')
+order by e.salary desc;
+
+select dname, avg(salary)
+from empdetails e natural join department d
+where hiredate> '1980-12-31'
+group by dname
+order by avg(salary) desc;
+
+select e1.ename, e2.ename,d.dname,e1.hiredate
+from empdetails e1  natural join department d
+join empdetails e2
+ on  e1.deptno = e2.deptno 
+and e1.hiredate=e2.hiredate
+and e1.empno<> e2.empno ;
+-- or
+select e.ename,e.hiredate,d.dname
+from empdetails e
+natural join department d
+where (e.deptno,e.hiredate) in (
+select deptno,hiredate
+from empdetails
+group by deptno,hiredate
+having count(*)>1);
+
+
+create table customer (id int,age int);
+drop table customer;
+rollback;
+describe customer;
+
+-- view
+create view deptandemp as
+select* from empdetails natural join department;
+
+select * from deptandemp;
